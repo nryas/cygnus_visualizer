@@ -20,5 +20,18 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+    
+        ofBuffer buffer;
+    
+        struct log_data {
+            string time;
+            ofPoint point;
+        };
+    
+        vector<vector<log_data>> log;
+    
+        int mouse_x;
+        float x_min, x_max, y_min, y_max;
+    
+        int n;
 };
