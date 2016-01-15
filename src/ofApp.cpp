@@ -37,10 +37,14 @@ void ofApp::setup(){
     
     mode = Mode::INTERACTIVE;
     current_index = 0;
+    ofSetBackgroundAuto(false);
+    ofBackground(0, 0, 0);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    int fps = ofGetMouseY();
+    ofSetFrameRate(ofMap(fps, ofGetHeight(), 0, 1, 60));
 }
 
 //--------------------------------------------------------------
@@ -55,12 +59,20 @@ void ofApp::draw(){
         
         vector<log_data> log_same_time = log[index];
         for (auto l: log_same_time) {
-            ofDrawBitmapString(l.time, 10, 100);
+            ofSetColor(255, 255, 255);
+            ofDrawBitmapString(l.time, 10, 10);
+            ofSetColor(0, 0, 0, 10);
+            ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+            ofSetColor(0, 200, 255);
             ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
         }
     } else if (mode == Mode::MOVIE) {
         for (auto l: log[current_index]) {
-            ofDrawBitmapString(l.time, 10, 100);
+            ofSetColor(255, 255, 255);
+            ofDrawBitmapString(l.time, 10, 10);
+            ofSetColor(0, 0, 0, 10);
+            ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+            ofSetColor(0, 200, 255);
             ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
         }
         current_index++;
