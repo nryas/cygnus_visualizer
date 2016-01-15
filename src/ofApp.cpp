@@ -34,32 +34,47 @@ void ofApp::setup(){
     x_max = *max_element(x_vec.begin(), x_vec.end());
     y_min = *min_element(y_vec.begin(), y_vec.end());
     y_max = *max_element(y_vec.begin(), y_vec.end());
+    
+    mode = Mode::INTERACTIVE;
+    current_index = 0;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    mouse_x = ofGetMouseX();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    int index = (int)ofMap(mouse_x, 0, ofGetWidth(), 0, n);
-    if (index < 0) {
-        index = 0;
-    } else if (index >= n) {
-        index = n - 1;
-    }
-    
-    vector<log_data> log_same_time = log[index];
-    for (auto l: log_same_time) {
-        ofDrawBitmapString(l.time, 10, 100);
-        ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
+    if (mode == Mode::INTERACTIVE) {
+        int index = (int)ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, n);
+        if (index < 0) {
+            index = 0;
+        } else if (index >= n) {
+            index = n - 1;
+        }
+        
+        vector<log_data> log_same_time = log[index];
+        for (auto l: log_same_time) {
+            ofDrawBitmapString(l.time, 10, 100);
+            ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
+        }
+    } else if (mode == Mode::MOVIE) {
+        for (auto l: log[current_index]) {
+            ofDrawBitmapString(l.time, 10, 100);
+            ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
+        }
+        current_index++;
+        if (current_index > n) { current_index = 0; }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (mode) {
+        mode = Mode::INTERACTIVE;
+    } else {
+        mode = Mode::MOVIE;
+    }
 }
 
 //--------------------------------------------------------------

@@ -29,9 +29,13 @@ class ofApp : public ofBaseApp{
         };
     
         vector<vector<log_data>> log;
-    
-        int mouse_x;
         float x_min, x_max, y_min, y_max;
+        int n, current_index;
     
-        int n;
+        enum Mode {
+            INTERACTIVE,
+            MOVIE,
+        };
+    
+        Mode mode;
 };
