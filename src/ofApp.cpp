@@ -49,6 +49,18 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    
+    ofPushMatrix();
+    ofDrawBitmapString(ofGetFrameRate(), 10, 100);
+    ofRotateZ(-10);
+    ofNoFill();
+    ofSetColor(255, 255, 255);
+    auto origin = ofPoint(ofMap(0, x_min, x_max, 0, ofGetWidth()), ofMap(0, y_min, y_max, ofGetHeight(), 0));
+    ofDrawCircle(origin, 10);
+    ofDrawLine(origin, ofPoint(cos(4*M_PI/3)*1000, sin(4*M_PI/3)*1000));
+    ofDrawLine(origin, ofPoint(cos(2*M_PI/3)*1000, sin(2*M_PI/3)*1000));
+    ofFill();
+    
     if (mode == Mode::INTERACTIVE) {
         int index = (int)ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, n);
         if (index < 0) {
@@ -60,23 +72,26 @@ void ofApp::draw(){
         vector<log_data> log_same_time = log[index];
         for (auto l: log_same_time) {
             ofSetColor(255, 255, 255);
-            ofDrawBitmapString(l.time, 10, 10);
+            ofDrawBitmapString(l.time, 10, 20);
             ofSetColor(0, 0, 0, 10);
             ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
             ofSetColor(0, 200, 255);
             ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
         }
+        ofPopMatrix();
     } else if (mode == Mode::MOVIE) {
         for (auto l: log[current_index]) {
             ofSetColor(255, 255, 255);
-            ofDrawBitmapString(l.time, 10, 10);
+            ofDrawBitmapString(l.time, 10, 20);
             ofSetColor(0, 0, 0, 10);
             ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
             ofSetColor(0, 200, 255);
             ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
         }
-        current_index++;
-        if (current_index > n) { current_index = 0; }
+        ofPopMatrix();
+        ofSetColor(0, 200, 255);
+        ofDrawRectangle(0, ofGetHeight()-10, (float)current_index / (float)n * (float)ofGetWidth(), 10);
+        if (++current_index > n) { current_index = 0; }
     }
 }
 
