@@ -35,9 +35,8 @@ void ofApp::setup(){
     y_min = *min_element(y_vec.begin(), y_vec.end());
     y_max = *max_element(y_vec.begin(), y_vec.end());
     
-    mode = Mode::INTERACTIVE;
+    mode = Mode::MANUAL;
     current_index = 0;
-    ofSetBackgroundAuto(false);
     ofBackground(0, 0, 0);
 }
 
@@ -51,7 +50,9 @@ void ofApp::update(){
 void ofApp::draw(){
     
     ofPushMatrix();
-    ofDrawBitmapString(ofGetFrameRate(), 10, 100);
+    ofDrawBitmapString("FPS:" + ofToString(ofGetFrameRate()), 10, 40);
+    string s  = mode ? "Auto" : "Manual";
+    ofDrawBitmapString(s, 10, 60);
     ofRotateZ(-10);
     ofNoFill();
     ofSetColor(255, 255, 255);
@@ -61,15 +62,10 @@ void ofApp::draw(){
     ofDrawLine(origin, ofPoint(cos(2*M_PI/3)*1000, sin(2*M_PI/3)*1000));
     ofFill();
     
-    if (mode == Mode::INTERACTIVE) {
-        int index = (int)ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, n);
-        if (index < 0) {
-            index = 0;
-        } else if (index >= n) {
-            index = n - 1;
-        }
+    if (mode == Mode::MANUAL) {
+
         
-        vector<log_data> log_same_time = log[index];
+        vector<log_data> log_same_time = log[current_index];
         for (auto l: log_same_time) {
             ofSetColor(255, 255, 255);
             ofDrawBitmapString(l.time, 10, 20);
@@ -79,7 +75,7 @@ void ofApp::draw(){
             ofDrawCircle(ofMap(l.point.x, x_min, x_max, 0, ofGetWidth()), ofMap(l.point.y, y_min, y_max, ofGetHeight(), 0), 10);
         }
         ofPopMatrix();
-    } else if (mode == Mode::MOVIE) {
+    } else if (mode == Mode::AUTO) {
         for (auto l: log[current_index]) {
             ofSetColor(255, 255, 255);
             ofDrawBitmapString(l.time, 10, 20);
@@ -90,17 +86,34 @@ void ofApp::draw(){
         }
         ofPopMatrix();
         ofSetColor(0, 200, 255);
-        ofDrawRectangle(0, ofGetHeight()-10, (float)current_index / (float)n * (float)ofGetWidth(), 10);
+    }
+    
+    ofDrawRectangle(0, ofGetHeight()-10, (float)current_index / (float)n * (float)ofGetWidth(), 10);
+    
+    if (mode == Mode::AUTO) {
         if (++current_index > n) { current_index = 0; }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (mode) {
-        mode = Mode::INTERACTIVE;
-    } else {
-        mode = Mode::MOVIE;
+    if (key == OF_KEY_LEFT)
+    {
+        current_index--;
+    }
+    
+    else if (key == OF_KEY_RIGHT)
+    {
+        current_index++;
+    }
+    
+    else
+    {
+        if (mode) {
+            mode = Mode::MANUAL;
+        } else {
+            mode = Mode::AUTO;
+        }
     }
 }
 
@@ -111,7 +124,12 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    current_index = (int)ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, n);
+    if (current_index < 0) {
+        current_index = 0;
+    } else if (current_index >= n) {
+        current_index = n - 1;
+    }
 }
 
 //--------------------------------------------------------------
@@ -121,7 +139,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    current_index = (int)ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, n);
 }
 
 //--------------------------------------------------------------

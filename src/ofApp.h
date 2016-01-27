@@ -33,8 +33,8 @@ class ofApp : public ofBaseApp{
         int n, current_index;
     
         enum Mode {
-            INTERACTIVE,
-            MOVIE,
+            MANUAL,
+            AUTO,
         };
     
         Mode mode;
